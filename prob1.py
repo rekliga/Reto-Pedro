@@ -24,22 +24,18 @@ cursor = connection.cursor()
 valores_quitados = int()
 cuenta = 0
 for index, row in df.iterrows():
-    #print(row[1])
-    
     try:
         var1= (f'INSERT INTO Cargo (id,company_name,company_id,amount,status,created_at,update_at ) values("{cuenta}","{row[1]}","{row.company_id}",{row.amount},"{row.status}","{row.created_at}","{row.paid_at}")')
         cursor.execute(var1)
     except:
 
-        #row.amount = round(row.amount,2)
-        #print(row.amount)
         #print(f'INSERT INTO Cargo (id,company_name,company_id,amount,status,created_at,update_at ) values("{row.id}","{row[1]}","{row.company_id}",{row.amount},"{row.status}","{row.created_at}",null)')
         try:
             cursor.execute(f'INSERT INTO Cargo (id,company_name,company_id,amount,status,created_at,update_at ) values("{cuenta}","{row[1]}","{row.company_id}",{row.amount},"{row.status}","{row.created_at}",null)')
         except:
             if len(str(row.amount))>15:
                 cursor.execute(f'INSERT INTO Cargo (id,company_name,company_id,amount,status,created_at,update_at ) values("{cuenta}","{row[1]}","{row.company_id}",{str(row.amount)[:4]},"{row.status}","{row.created_at}",null)')
-                print("funciono XD")
+                #print("funciono XD")
             elif str(row.id) == "nan":
                 cursor.execute(f'INSERT INTO Cargo (id,company_name,company_id,amount,status,created_at,update_at ) values("{cuenta}","{row[1]}","{row.company_id}",{str(row.amount)[:4]},"{row.status}","{row.created_at}",null)')
             
@@ -50,8 +46,17 @@ for index, row in df.iterrows():
 #cursor.commit()
 #cursor.close()
 #print(len(valor_max))
+import openpyxl
+wb = openpyxl.Workbook()
+hoja = wb.active
+linea = int()
 estados = cursor.execute("SELECT * FROM Cargo")
-#for i in (cursor.fetchall()):
-#    print(i)
+for i in (cursor.fetchall()):
+    print(hoja.append(i))
+
+# for dato in datos:
+#         hoja.append(dato)
+wb.save('datos.xlsx')
+    
 #print("valores quitados",valores_quitados)
-connection.commit()
+#connection.commit()
