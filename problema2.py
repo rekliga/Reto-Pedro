@@ -8,7 +8,7 @@ class Problema:
             #print(self.primeros)
         except ValueError:
             print("el numero ingresado no es un entero",numero)
-
+            #1
     def calc(self):
         numero = set(range(1,101))-set(self.primeros)
         for i in numero:
