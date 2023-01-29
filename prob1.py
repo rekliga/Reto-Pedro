@@ -23,40 +23,36 @@ cursor = connection.cursor()
 
 valores_quitados = int()
 cuenta = 0
-for index, row in df.iterrows():
-    try:
-        var1= (f'INSERT INTO Cargo (id,company_name,company_id,amount,status,created_at,update_at ) values("{cuenta}","{row[1]}","{row.company_id}",{row.amount},"{row.status}","{row.created_at}","{row.paid_at}")')
-        cursor.execute(var1)
-    except:
-
-        #print(f'INSERT INTO Cargo (id,company_name,company_id,amount,status,created_at,update_at ) values("{row.id}","{row[1]}","{row.company_id}",{row.amount},"{row.status}","{row.created_at}",null)')
+def cargaSQL():
+    for index, row in df.iterrows():
         try:
-            cursor.execute(f'INSERT INTO Cargo (id,company_name,company_id,amount,status,created_at,update_at ) values("{cuenta}","{row[1]}","{row.company_id}",{row.amount},"{row.status}","{row.created_at}",null)')
+            var1= (f'INSERT INTO Cargo (id,company_name,company_id,amount,status,created_at,update_at ) values("{cuenta}","{row[1]}","{row.company_id}",{row.amount},"{row.status}","{row.created_at}","{row.paid_at}")')
+            cursor.execute(var1)
         except:
-            if len(str(row.amount))>15:
-                cursor.execute(f'INSERT INTO Cargo (id,company_name,company_id,amount,status,created_at,update_at ) values("{cuenta}","{row[1]}","{row.company_id}",{str(row.amount)[:4]},"{row.status}","{row.created_at}",null)')
-                #print("funciono XD")
-            elif str(row.id) == "nan":
-                cursor.execute(f'INSERT INTO Cargo (id,company_name,company_id,amount,status,created_at,update_at ) values("{cuenta}","{row[1]}","{row.company_id}",{str(row.amount)[:4]},"{row.status}","{row.created_at}",null)')
-            
-            #print(str(row.amount)[:4])
-            #print(f'INSERT INTO Cargo (id,company_name,company_id,amount,status,created_at,update_at ) values("{row.id}","{row[1]}","{row.company_id}",{row.amount},"{row.status}","{row.created_at}",null)')
-    cuenta +=1
-    
-#cursor.commit()
-#cursor.close()
-#print(len(valor_max))
+            try:
+                cursor.execute(f'INSERT INTO Cargo (id,company_name,company_id,amount,status,created_at,update_at ) values("{cuenta}","{row[1]}","{row.company_id}",{row.amount},"{row.status}","{row.created_at}",null)')
+            except:
+                if len(str(row.amount))>15:
+                    cursor.execute(f'INSERT INTO Cargo (id,company_name,company_id,amount,status,created_at,update_at ) values("{cuenta}","{row[1]}","{row.company_id}",{str(row.amount)[:4]},"{row.status}","{row.created_at}",null)') 
+                elif str(row.id) == "nan":
+                    cursor.execute(f'INSERT INTO Cargo (id,company_name,company_id,amount,status,created_at,update_at ) values("{cuenta}","{row[1]}","{row.company_id}",{str(row.amount)[:4]},"{row.status}","{row.created_at}",null)')
+                
+                
+        cuenta +=1
+    connection.commit()
+try:
+    cargaSQL()
+except:
+    pass
 import openpyxl
-wb = openpyxl.Workbook()
-hoja = wb.active
-linea = int()
-estados = cursor.execute("SELECT * FROM Cargo")
-for i in (cursor.fetchall()):
-    print(hoja.append(i))
+def generaexcel():
+    wb = openpyxl.Workbook()
+    hoja = wb.active
+    linea = int()
+    estados = cursor.execute("SELECT * FROM Cargo order by id")
+    for i in (cursor.fetchall()):
+        hoja.append(i)
 
-# for dato in datos:
-#         hoja.append(dato)
-wb.save('datos.xlsx')
+    wb.save('datos.xlsx')
     
-#print("valores quitados",valores_quitados)
-#connection.commit()
+generaexcel()
